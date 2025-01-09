@@ -1842,6 +1842,16 @@ export class NetworkLogView extends Common.ObjectWrapper.eventMixin<EventTypes, 
         i18nString(UIStrings.clearBrowserCookies), this.clearBrowserCookies.bind(this),
         {jslogContext: 'clear-browser-cookies'});
 
+    contextMenu.editSection().appendItem(
+      "Copy as RestAPI", ()=>{
+        request.requestFormData().then((content)=>{
+          let command = `RestAPI.${request.requestMethod.toLowerCase()}({url:"${request.url().split("https://discord.com/api/v9")[1]}",body:${content?.replace(/nonce\":\"[0-9]{18,21}\"/, "nonce\":SnowflakeUtils.fromTimestamp(Date.now())")}})`
+          Host.InspectorFrontendHost.InspectorFrontendHostInstance.copyText(command);
+  
+        })
+      }
+    )
+
     if (request) {
       const maxBlockedURLLength = 20;
       const manager = SDK.NetworkManager.MultitargetNetworkManager.instance();
